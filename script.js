@@ -1,10 +1,10 @@
 // Initialize Supabase client
-const SUPABASE_URL = 'https://bycgbwvfkyoaksniehhv.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5Y2did3Zma3lvYWtzbmllaGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDk5MTEsImV4cCI6MjA1OTUyNTkxMX0.jBXqjPl9b1bToCPH1FESbjPHNBWraMnBUUGq8zyNUDc';
+const SUPABASE_URL = 'SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'SUPABASE_ANON_KEY';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// GitHub repository URL for redirection
-const GITHUB_REDIRECT_URL = 'https://github.com/scriptswithsnacks/Scripts';
+// Redirect URL
+const REDIRECT_URL = 'REDIRECT_URL';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Elements
@@ -17,11 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle form submissions
     if (emailForm) {
-        emailForm.addEventListener('submit', handleSubmit);
+        emailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleSubmit(e);
+        });
     }
 
     if (footerEmailForm) {
-        footerEmailForm.addEventListener('submit', handleSubmit);
+        footerEmailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleSubmit(e);
+        });
     }
 
     // Handle nav CTA button
@@ -48,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (redirectLink) {
         redirectLink.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = GITHUB_REDIRECT_URL;
+            window.location.href = REDIRECT_URL;
         });
     }
 
@@ -61,8 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Simple form submission function
     async function handleSubmit(e) {
-        e.preventDefault();
-        
         // Get the email from the form
         const form = e.target;
         const emailInput = form.querySelector('input[type="email"]');
@@ -103,19 +107,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Try to save the email, then redirect regardless of result
+        // Try to save the email
         try {
-            // Fire and forget - submit the email to Supabase
-            supabase.from('subscribers').insert({ email: email });
+            // Submit the email to Supabase
+            const { error } = await supabase.from('subscribers').insert({ email: email });
+            
+            if (error) throw error;
             
             // Clear the form
             emailInput.value = '';
+            
+            // Show success modal
+            successModal.classList.add('show');
+            
+            // Wait for 2 seconds before redirecting
+            setTimeout(() => {
+                window.location.href = REDIRECT_URL;
+            }, 2000);
+            
         } catch (error) {
             console.error('Error:', error);
+            alert('There was an error saving your email. Please try again.');
         }
-        
-        // Redirect immediately to GitHub
-        window.location.href = GITHUB_REDIRECT_URL;
     }
 
     // Smooth scrolling for anchor links

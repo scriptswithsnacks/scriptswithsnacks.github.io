@@ -1,0 +1,43 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create .env file
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          echo "REDIRECT_URL=${{ secrets.REDIRECT_URL }}" >> .env
+          
+      - name: Build script.js
+        run: |
+          # Create a temporary script file
+          cat > script.js.tmp << 'EOL'
+          // Initialize Supabase client
+          const SUPABASE_URL = '${{ secrets.SUPABASE_URL }}';
+          const SUPABASE_ANON_KEY = '${{ secrets.SUPABASE_ANON_KEY }}';
+          const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+          // Redirect URL
+          const REDIRECT_URL = '${{ secrets.REDIRECT_URL }}';
+          EOL
+          
+          # Append the rest of the original script.js
+          tail -n +6 script.js >> script.js.tmp
+          
+          # Replace the original script.js
+          mv script.js.tmp script.js
+          
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ 
