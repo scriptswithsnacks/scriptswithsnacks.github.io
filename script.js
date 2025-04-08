@@ -3,6 +3,9 @@ const SUPABASE_URL = 'https://bycgbwvfkyoaksniehhv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5Y2did3Zma3lvYWtzbmllaGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDk5MTEsImV4cCI6MjA1OTUyNTkxMX0.jBXqjPl9b1bToCPH1FESbjPHNBWraMnBUUGq8zyNUDc';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// GitHub repository URL for redirection
+const GITHUB_REDIRECT_URL = 'https://github.com/scriptswithsnacks/Scripts';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const emailForm = document.getElementById('email-form');
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (redirectLink) {
         redirectLink.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = 'https://github.com/mushfikurahmaan';
+            window.location.href = GITHUB_REDIRECT_URL;
         });
     }
 
@@ -65,40 +68,54 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailInput = form.querySelector('input[type="email"]');
         const email = emailInput.value.trim();
         
+        // Strong email validation with regex
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        
         if (!email) {
-            alert('Please enter a valid email address.');
+            alert('Please enter an email address.');
             return;
         }
         
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            emailInput.focus();
+            return;
+        }
+        
+        // Additional validation checks
+        if (email.split('@')[0].length < 3) {
+            alert('Email username must be at least 3 characters long.');
+            emailInput.focus();
+            return;
+        }
+        
+        const domain = email.split('@')[1];
+        if (!domain.includes('.')) {
+            alert('Invalid email domain.');
+            emailInput.focus();
+            return;
+        }
+        
+        const extension = domain.split('.').pop();
+        if (extension.length < 2) {
+            alert('Invalid email domain extension.');
+            emailInput.focus();
+            return;
+        }
+        
+        // Try to save the email, then redirect regardless of result
         try {
-            // Create a new object to insert
-            const { error } = await supabase.from('subscribers').insert({
-                email: email
-                // Let Supabase handle the ID and timestamp with default values
-            });
-            
-            if (error) {
-                console.error('Error details:', error);
-                throw error;
-            }
+            // Fire and forget - submit the email to Supabase
+            supabase.from('subscribers').insert({ email: email });
             
             // Clear the form
             emailInput.value = '';
-            
-            // Redirect immediately to GitHub
-            window.location.href = 'https://github.com/mushfikurahmaan';
-            
         } catch (error) {
-            console.error('Form submission error:', error);
-            
-            // Simple error handling
-            if (error.code === '23505') { // Duplicate email
-                alert('This email is already subscribed!');
-                emailInput.value = '';
-            } else {
-                alert('Error saving your email. Please try again.');
-            }
+            console.error('Error:', error);
         }
+        
+        // Redirect immediately to GitHub
+        window.location.href = GITHUB_REDIRECT_URL;
     }
 
     // Smooth scrolling for anchor links
