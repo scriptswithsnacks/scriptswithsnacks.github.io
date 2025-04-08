@@ -112,14 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Try to save the email
         try {
             // Submit the email to Supabase
-            const { error } = await supabase.from('subscribers').insert({ email: email });
+            const { data, error } = await supabase
+                .from('subscribers')
+                .insert([{ email: email }])
+                .select();
             
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
             
             // Clear the form
             emailInput.value = '';
             
             // Show success modal
+            successModal.style.display = 'block';
             successModal.classList.add('show');
             
             // Wait for 2 seconds before redirecting
