@@ -74,37 +74,69 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailInput = form.querySelector('input[type="email"]');
         const email = emailInput.value.trim();
         
-        // Strong email validation with regex
-        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        // Strong email validation rules
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         
+        // Validation checks
         if (!email) {
             alert('Please enter an email address.');
             return;
         }
         
+        // Check email format
         if (!emailRegex.test(email)) {
             alert('Please enter a valid email address.');
             emailInput.focus();
             return;
         }
         
-        // Additional validation checks
-        if (email.split('@')[0].length < 3) {
+        // Check username length (before @)
+        const username = email.split('@')[0];
+        if (username.length < 3) {
             alert('Email username must be at least 3 characters long.');
             emailInput.focus();
             return;
         }
         
+        // Check domain
         const domain = email.split('@')[1];
-        if (!domain.includes('.')) {
+        if (!domain) {
             alert('Invalid email domain.');
             emailInput.focus();
             return;
         }
         
-        const extension = domain.split('.').pop();
-        if (extension.length < 2) {
+        // Check for valid domain format
+        if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(domain)) {
+            alert('Invalid email domain format.');
+            emailInput.focus();
+            return;
+        }
+        
+        // Check for consecutive dots
+        if (domain.includes('..')) {
+            alert('Invalid email domain (consecutive dots).');
+            emailInput.focus();
+            return;
+        }
+        
+        // Check for valid TLD
+        const tld = domain.split('.').pop();
+        if (tld.length < 2 || tld.length > 6) {
             alert('Invalid email domain extension.');
+            emailInput.focus();
+            return;
+        }
+        
+        // Check for common disposable email domains
+        const disposableDomains = [
+            'tempmail.com', 'throwawaymail.com', 'guerrillamail.com',
+            'mailinator.com', 'yopmail.com', 'temp-mail.org',
+            'dispostable.com', 'maildrop.cc', '10minutemail.com'
+        ];
+        
+        if (disposableDomains.some(d => domain.toLowerCase().includes(d))) {
+            alert('Disposable email addresses are not allowed.');
             emailInput.focus();
             return;
         }
@@ -114,12 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // Submit the email to Supabase
             const { data, error } = await supabase
                 .from('subscribers')
-                .insert([{ email: email }])
+                .insert([
+                    { 
+                        email: email,
+                        created_at: new Date().toISOString()
+                    }
+                ])
                 .select();
             
             if (error) {
                 console.error('Supabase error:', error);
-                throw error;
+                if (error.code === '23505') { // Unique violation
+                    alert('This email is already subscribed.');
+                } else {
+                    throw error;
+                }
+                return;
             }
             
             // Clear the form
