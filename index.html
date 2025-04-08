@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snacks & Scripts</title>
+    <meta name="description" content="Free, production-ready scripts for various programming languages. New scripts every week.">
+    <meta name="keywords" content="python, javascript, java, scripts, automation, programming, free scripts">
+    <meta property="og:title" content="Snacks & Scripts">
+    <meta property="og:description" content="Free, production-ready scripts for various programming languages. New scripts every week.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Snacks & Scripts</div>
+                <button class="cta-button nav-cta">Subscribe</button>
+            </nav>
+            <div class="hero">
+                <h1>Powerful Code Snippets That Solve Real Problems</h1>
+                <p>Free, production-ready scripts for Python, JavaScript, Java and more. New scripts delivered weekly.</p>
+                <form id="email-form" class="signup-form">
+                    <input type="email" id="email" placeholder="Your email address" required>
+                    <button type="submit" class="cta-button">Get Free Scripts</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <section class="languages">
+        <div class="container">
+            <h2>MULTI-LANGUAGE SUPPORT</h2>
+            <div class="language-icons">
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" alt="C#">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" alt="C">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg" alt="Go">
+                </div>
+                <div class="language-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg" alt="Ruby">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Never Miss a New Script</h2>
+            <p>Join hundreds of developers who get useful scripts delivered to their inbox every week.</p>
+            <form id="footer-email-form" class="signup-form">
+                <input type="email" id="footer-email" placeholder="Your email address" required>
+                <button type="submit" class="cta-button">Subscribe Now</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p class="copyright">© 2025 Snacks & Scripts. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="https://github.com/mushfikurahmaan" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="https://x.com/tars4mars" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a href="https://www.linkedin.com/in/mushfikrahman/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Thank You!</h2>
+            <p>You've successfully subscribed to receive our scripts.</p>
+            <a href="https://github.com/scriptswithsnacks/Scripts" class="redirect-link" id="redirect-link">View Scripts on GitHub →</a>
+        </div>
+    </div>
+</body>
+</html> 
